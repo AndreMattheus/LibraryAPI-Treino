@@ -93,7 +93,17 @@ class LivroRepositoryTest {
     @Test
     void deletar(){
         UUID id = UUID.fromString("46354631464635");
-        var livroParaDeletar = repository.deleteById(id);
+        repository.deleteById(id);
+    }
 
+    @Test
+    void buscarLivroTest(){
+        UUID id = UUID.fromString("46354631464635");
+        Livro livro = repository.findById(id).orElse(null);
+        System.out.println("Livro: ");
+        System.out.println(livro.getTitulo());
+
+        System.out.println("Autor: ");
+        System.out.println(livro.getAutor().getNome());
     }
 }
