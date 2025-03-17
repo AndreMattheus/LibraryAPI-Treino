@@ -34,13 +34,13 @@ public class AutorRepositoryTest {
         Optional<Autor> possivelAutor = repository.findById(id);
 
         if(possivelAutor.isPresent()){
-            Autor autorEnconstrado = possivelAutor.get();
+            Autor autorEncontrado = possivelAutor.get();
             System.out.println("Dados do Autor:");
             System.out.println(possivelAutor.get());
 
-            autorEnconstrado.setDataNascimento(LocalDate.of(1960,1,30));
+            autorEncontrado.setDataNascimento(LocalDate.of(1960,1,30));
 
-            repository.save(autorEnconstrado);
+            repository.save(autorEncontrado);
         }
     }
 
