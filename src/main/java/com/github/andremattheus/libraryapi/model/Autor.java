@@ -30,8 +30,8 @@ public class Autor {
     @Column(name = "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
-    //@OneToMany(mappedBy = "autor")
-    @Transient
+    @OneToMany(mappedBy = "autor")
+    //@Transient
     private List<Livro> livros;
 
 //    Construtor vazio para ser usado pelo framework para instanciar

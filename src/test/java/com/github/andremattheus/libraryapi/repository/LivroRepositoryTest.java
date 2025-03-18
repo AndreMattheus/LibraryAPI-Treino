@@ -6,9 +6,11 @@ import com.github.andremattheus.libraryapi.model.Livro;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
@@ -22,22 +24,23 @@ class LivroRepositoryTest {
 
     // Salvando o autor buscando no banco de dados um já existente
     @Test
-    void salvarTest(){
+    void salvarTest() {
         Livro livro = new Livro();
         livro.setIsbn("6513-1546");
-        livro.setPreco(BigDecimal.valueOf(100));
-        livro.setGenero(GeneroLivro.FICCAO);
-        livro.setTitulo("UFO");
-        livro.setDataPublicacao(LocalDate.of(1982, 1, 15));
+        livro.setPreco(BigDecimal.valueOf(150));
+        livro.setGenero(GeneroLivro.FANTASIA);
+        livro.setTitulo("Harry Potter");
+        livro.setDataPublicacao(LocalDate.of(1995, 6, 15));
 
-        Autor autor = autorRepository.findById(UUID.fromString("6516346351346")).orElse(null);
+        Autor autor = autorRepository.findById(UUID.fromString("035ebf92-d68e-476b-9b46-2a1c704601d6")).orElse(null);
 
         livro.setAutor(autor);
+        repository.save(livro);
     }
 
     // Sem cascade (Precisa comentar o cascade em livro.class para funcionar)
     @Test
-    void salvarAutorELivroTest(){
+    void salvarAutorELivroTest() {
         Livro livro = new Livro();
         livro.setIsbn("6513-1546");
         livro.setPreco(BigDecimal.valueOf(100));
@@ -48,7 +51,7 @@ class LivroRepositoryTest {
         Autor autor = new Autor();
         autor.setNome("Maria");
         autor.setNacionalidade("Brasileira");
-        autor.setDataNascimento(LocalDate.of(1951,4,18));
+        autor.setDataNascimento(LocalDate.of(1951, 4, 18));
 
         autorRepository.save(autor);
 
@@ -59,7 +62,7 @@ class LivroRepositoryTest {
 
     // Salvando o autor junto com o livro em CASCATA (cascade)
     @Test
-    void salvarCascadeTest(){
+    void salvarCascadeTest() {
         Livro livro = new Livro();
         livro.setIsbn("6513-1546");
         livro.setPreco(BigDecimal.valueOf(100));
@@ -70,7 +73,7 @@ class LivroRepositoryTest {
         Autor autor = new Autor();
         autor.setNome("Maria");
         autor.setNacionalidade("Brasileira");
-        autor.setDataNascimento(LocalDate.of(1951,4,18));
+        autor.setDataNascimento(LocalDate.of(1951, 4, 18));
 
         livro.setAutor(autor);
 
@@ -78,7 +81,7 @@ class LivroRepositoryTest {
     }
 
     @Test
-    void atualizarAutorDoLivro(){
+    void atualizarAutorDoLivro() {
         UUID id = UUID.fromString("ondwknnabulblonawf");
         var livroParaAtualizar = repository.findById(id).orElse(null);
 
@@ -91,9 +94,32 @@ class LivroRepositoryTest {
     }
 
     @Test
-    void deletar(){
+    void deletar() {
         UUID id = UUID.fromString("46354631464635");
-        var livroParaDeletar = repository.deleteById(id);
+        repository.deleteById(id);
 
+    }
+
+    @Test
+    @Transactional
+        //Precisa do @Transient em List do Autor.class e remover @OneToMany
+    void buscarLivroTest() {
+        UUID id = UUID.fromString("1f3cfb6e-dd91-4df1-bc3d-5211050086e3");
+        var livro = repository.findById(id).orElse(null);
+        System.out.println("Livro buscado: " + livro.getTitulo());
+        System.out.println("Autor: " + livro.getAutor().getNome());
+
+    }
+
+    @Test
+    void pesquisaPorTituloTest() {
+        List<Livro> lista = repository.findByTitulo("Amor de Verão");
+        lista.forEach(System.out::println);
+    }
+
+    @Test
+    void pesquisaPorIsbnTest() {
+        List<Livro> lista = repository.findByIsbn("4002-8922");
+        lista.forEach(System.out::println);
     }
 }
