@@ -4,8 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,6 +18,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+// Faz escutar a entidade para a auditoria atualizar
+@EntityListeners(AuditingEntityListener.class)
 public class Autor {
 
     @Id
@@ -33,6 +39,17 @@ public class Autor {
     @OneToMany(mappedBy = "autor")
     //@Transient
     private List<Livro> livros;
+
+    @CreatedDate
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @LastModifiedDate
+    @Column(name = "data_atualizacao")
+    private LocalDateTime dataAtualizacao;
+
+    @Column(name = "id_usuario")
+    private UUID idUsuario;
 
 //    Construtor vazio para ser usado pelo framework para instanciar
 //    @Deprecated
