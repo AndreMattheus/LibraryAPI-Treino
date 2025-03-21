@@ -11,11 +11,14 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
 
     // Query Methods (Forma que o JPA faz ações no banco de dados sem precisar de SQL
     // select * from livro where id_autor = id
+
     List<Livro> findByAutor(Autor autor);
-
     // select * from livro where isbn = isbn
-    List<Livro> findByIsbn(String isbn);
 
+    List<Livro> findByIsbn(String isbn);
     // select * from livro where titulo = titulo
+
     List<Livro> findByTitulo(String titulo);
+
+    boolean existsByAutor(Autor autor);
 }

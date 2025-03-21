@@ -32,7 +32,7 @@ class LivroRepositoryTest {
         livro.setTitulo("Harry Potter");
         livro.setDataPublicacao(LocalDate.of(1995, 6, 15));
 
-        Autor autor = autorRepository.findById(UUID.fromString("035ebf92-d68e-476b-9b46-2a1c704601d6")).orElse(null);
+        Autor autor = autorRepository.findById(UUID.fromString("33239c63-7b96-44e8-8ded-f20732e50adc")).orElse(null);
 
         livro.setAutor(autor);
         repository.save(livro);
@@ -104,7 +104,7 @@ class LivroRepositoryTest {
     @Transactional
         //Precisa do @Transient em List do Autor.class e remover @OneToMany
     void buscarLivroTest() {
-        UUID id = UUID.fromString("1f3cfb6e-dd91-4df1-bc3d-5211050086e3");
+        UUID id = UUID.fromString("a83b5105-5824-4a4e-ab4c-ee49497a2b2f");
         var livro = repository.findById(id).orElse(null);
         System.out.println("Livro buscado: " + livro.getTitulo());
         System.out.println("Autor: " + livro.getAutor().getNome());

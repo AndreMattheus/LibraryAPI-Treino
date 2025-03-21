@@ -54,6 +54,6 @@ public class Autor {
 //    Construtor vazio para ser usado pelo framework para instanciar
 //    @Deprecated
 //    public Autor() {
-//    Ao não ser criado um construtor, o Java automaticamente identifica commo um construtor vazio existente
+//    Ao não ser criado um construtor, o Java automaticamente identifica como um construtor vazio existente
 //    }
 }

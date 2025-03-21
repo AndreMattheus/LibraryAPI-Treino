@@ -1,7 +1,11 @@
 package com.github.andremattheus.libraryapi.service;
 
+import com.github.andremattheus.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import com.github.andremattheus.libraryapi.model.Autor;
 import com.github.andremattheus.libraryapi.repository.AutorRepository;
+import com.github.andremattheus.libraryapi.repository.LivroRepository;
+import com.github.andremattheus.libraryapi.validator.AutorValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,15 +13,24 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+// Anotação para o Lombok fazer a criação automática de construtores em argumentos finais(RequiredArgs)
+@RequiredArgsConstructor
 public class AutorService {
 
     private final AutorRepository repository;
+    private final AutorValidator validator;
+    private final LivroRepository livroRepository;
 
-    public AutorService(AutorRepository repository) {
-        this.repository = repository;
-    }
+    // Não mais necessário pois estamos usando Anotação do Lombok para fazer automaticamente
+    // Construtor para as injeções
+//    public AutorService(AutorRepository repository, AutorValidator validator, LivroRepository livroRepository) {
+//        this.repository = repository;
+//        this.validator = validator;
+//        this.livroRepository = livroRepository;
+//    }
 
     public Autor salvar(Autor autor) {
+        validator.validar(autor);
         return repository.save(autor);
     }
 
@@ -25,6 +38,7 @@ public class AutorService {
         if(autor.getId() == null){
             throw new IllegalArgumentException("Para atualizar é necessário que o autor já esteja salvo no banco de dados");
         }
+        validator.validar(autor);
         repository.save(autor);
     }
 
@@ -33,6 +47,9 @@ public class AutorService {
     }
 
     public void deletar(Autor autor) {
+        if(possuiLivro(autor)){
+            throw new OperacaoNaoPermitidaException("Não é permitido excluir um autor que possui livros cadastrados.");
+        }
         repository.delete(autor);
     }
 
@@ -46,5 +63,9 @@ public class AutorService {
         } else{
             return repository.findAll();
         }
+    }
+
+    public boolean possuiLivro(Autor autor){
+        return livroRepository.existsByAutor(autor);
     }
 }
