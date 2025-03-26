@@ -2,10 +2,12 @@ package com.github.andremattheus.libraryapi.controller;
 
 import com.github.andremattheus.libraryapi.controller.dto.AutorDTO;
 import com.github.andremattheus.libraryapi.controller.dto.ErroResposta;
+import com.github.andremattheus.libraryapi.controller.mappers.AutorMapper;
 import com.github.andremattheus.libraryapi.exceptions.OperacaoNaoPermitidaException;
 import com.github.andremattheus.libraryapi.exceptions.RegistroDuplicadoException;
 import com.github.andremattheus.libraryapi.model.Autor;
 import com.github.andremattheus.libraryapi.service.AutorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,21 +34,22 @@ public class AutorController {
 //    }
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody AutorDTO autor) {
+    public ResponseEntity<Object> salvar(@RequestBody @Valid AutorDTO dto) {
         try {
-            Autor autorEntidade = autor.mapearParaAutor();
-            service.salvar(autorEntidade);
+            Autor autor = dto.mapearParaAutor();
+
+            service.salvar(autor);
 
 
             // http://localhost:8080/autores/e6b81cb1-d045-450f-a846-0492dd9044f0
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
-                    .buildAndExpand(autorEntidade.getId())
+                    .buildAndExpand(autor.getId())
                     .toUri();
 
             return ResponseEntity.created(location).build();
-            //new ResponseEntity("Autor salvo com sucesso! "+ autor, HttpStatus.CREATED);
+            //new ResponseEntity("Autor salvo com sucesso! "+ dto, HttpStatus.CREATED);
 
             // Recebe o Exception(Erro) e manda como resposta a tratativa desse erro (Código e Mensagem)
         } catch (RegistroDuplicadoException e){
@@ -57,10 +60,14 @@ public class AutorController {
     @GetMapping("/{id}")
     public ResponseEntity<AutorDTO> obterDetalhes(@PathVariable("id") String id){
         var idAutor = UUID.fromString(id);
+
         Optional<Autor> autorOptional = service.obterPorId(idAutor);
+
         if(autorOptional.isPresent()){
             Autor autor = autorOptional.get();
+            // Forma de mapear sem o MapStruct
             AutorDTO dto = new AutorDTO(autor.getId(), autor.getNome(), autor.getDataNascimento(), autor.getNacionalidade());
+
             return ResponseEntity.ok(dto);
         } return ResponseEntity.notFound().build();
     }
@@ -87,7 +94,7 @@ public class AutorController {
     @GetMapping
     public ResponseEntity<List<AutorDTO>> pesquisar(@RequestParam(value = "nome", required = false) String nome,
                                                     @RequestParam(value = "nacionalidade", required = false) String nacionalidade){
-        List<Autor> resultadoDaPesquisa = service.pesquisar(nome, nacionalidade);
+        List<Autor> resultadoDaPesquisa = service.pesquisaByExample(nome, nacionalidade);
         List<AutorDTO> lista = resultadoDaPesquisa.stream()
                 .map(autor -> new AutorDTO(autor.getId(),
                 autor.getNome(),
@@ -98,7 +105,7 @@ public class AutorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> atualizar(@PathVariable("id") String id,@RequestBody AutorDTO dto){
+    public ResponseEntity<Object> atualizar(@PathVariable("id") String id,@RequestBody @Valid AutorDTO dto){
         try {
             var idAutor = UUID.fromString(id);
             Optional<Autor> autorOptional = service.obterPorId(idAutor);
