@@ -38,6 +38,14 @@ public class Livro {
     @Column(name = "preco", precision = 18, scale = 2)
     private BigDecimal preco;
 
+    /** | VariosParaUm |
+     * Significa que pode haver vários 'algo' (geralmente a classe que você está trabalhando,
+     * nesse caso são livros) para apenas uma <ENTIDADE RELACIONADA> (nesse caso, autor)
+     *
+     * | Tipo de Atualização |
+     * [Lazy] = Carrega APENAS sob demanda;
+     * [Eager] = Carrega tudo de início (Ansioso)
+     */
     @ManyToOne(fetch = FetchType.LAZY)//(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_autor")
     private Autor autor;

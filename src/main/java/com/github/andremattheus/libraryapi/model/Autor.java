@@ -36,6 +36,14 @@ public class Autor {
     @Column(name = "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
+    /** | Um Para Vários |
+     * Significa que pode haver  Um algo (geralmente a classe que está em trabalho (nesse caso autor)
+     * para vários <ENTIDADE RELACIONADA> (nesse caso, livros)
+     *
+     * | mappedBy |
+     * Indica o lado da relação que é dono dela
+     * Deve indicar o nome da CLASSE e não do campo no banco de dados!
+     */
     @OneToMany(mappedBy = "autor")
     //@Transient
     private List<Livro> livros;
